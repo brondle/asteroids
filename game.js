@@ -11,6 +11,7 @@ var Game = Asteroids.Game = function() {
 	this.NUM_ASTEROIDS = 5;
 	this.addAsteroids();
   this.ship = new Asteroids.Ship();
+  this.ship.game = this;
 }
 
 Game.prototype.addAsteroids = function() {

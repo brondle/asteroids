@@ -4,6 +4,7 @@
     window.Asteroids = {};
   }
 
+  var RADS = Math.PI/180;
 	var Ship = Asteroids.Ship = function(){}
 
 	Ship.prototype = Object.create(Asteroids.movingObject.prototype, {
@@ -11,21 +12,24 @@
 		sides: {value: [ 25, 20]},
 		vel: {value: [0, 0], writable: true},
 		pos: {value: [500, 250]},
-    angle: {value: 0, writable: true}
+    angle: {value: 0, writable: true},
+    radius: {value: 15} //obviously doesn't actually have one, but necessary for wrapping
 	});
 
 	Ship.prototype.constructor = Ship;
 
 	Ship.prototype.draw = function(ctx) {
-    this.power();
-    // this.pos[0] += this.vel[0];
-    // this.pos[1] += this.vel[1];
     var xCoord = this.pos[0];
     var yCoord = this.pos[1]-(this.sides[0]/2);
 		ctx.strokeStyle = this.color;
+    //set ship as center of canvas for rotation
     ctx.translate (xCoord, yCoord);
-    this.rotate()
+    //check for rotation/movement
+    this.rotate();
+    this.power();
+    this.fly();
     ctx.rotate(this.angle);
+    //draw triangle
 		ctx.beginPath();
 		ctx.moveTo(-10, 0);
 		ctx.lineTo(0, 0 - this.sides[0]);
@@ -38,19 +42,60 @@
 
 
 	Ship.prototype.rotate = function() {
+    var degrees = this.angle / RADS
 		if(key.isPressed("left")) {
-      console.log(this.angle);
+      //rotate left
       this.angle -= .1;
+      if ((degrees) <= 0) {
+        //set angle for readability/ease of use with other methods
+        this.angle = (360 * RADS);
+      }
 		}
     if(key.isPressed("right")) {
+      //rotate right
 			this.angle += .1;
-		}
+      if ((degrees) >= 360) {
+        this.angle = 0;
+      }
+    }
+    if (degrees >= 90 && degrees <= 270) {
+      //set direction
+      this.direction = "down";
+    } else {
+      this.direction = "up";
+    }
 	}
 
   Ship.prototype.power = function() {
-    if(key.isPressed("up")) {
-      this.vel[0] -= .01;
+    if (key.isPressed("up")) {
+      //calculate added velocity
+      if (this.direction === "down") {
+        this.vel[0] += Math.sin(this.angle)/6;
+        this.vel[1] -= Math.cos(this.angle)/6;
+      } else {
+        this.vel[0] += Math.sin(this.angle)/6;
+        this.vel[1] -= Math.cos(this.angle)/6;
+      }
+    }
+
+    if (key.isPressed("down")) {
+      if (this.direction === "down") {
+        this.vel[0] -= Math.sin(this.angle)/12;
+        this.vel[1] += Math.cos(this.angle)/12;
+      } else {
+        this.vel[0] -= Math.sin(this.angle)/12;
+        this.vel[1] += Math.cos(this.angle)/12;
+      }
+    }
+
+    //set speed limits
+    for (var x in this.vel) {
+      if (this.vel[x] >= 5) {
+        this.vel[x] = 5;
+      }
+      if (this.vel[x] <= -5) {
+        this.vel[x] = -5;
+      }
     }
   }
-
 })();
