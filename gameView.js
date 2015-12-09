@@ -17,9 +17,9 @@
     ctx.canvas.height = window.innerHeight;
     //redraw canvas every 25 ms
 		setInterval(function() {
-      game.wrap(ctx);
 			game.draw(ctx);
 			game.moveObjects();
+      game.checkCollisions();
 		}, 25);
 	}
 

@@ -8,18 +8,20 @@ var Game = Asteroids.Game = function() {
 	// create game, set "constants" for dimensions and number of asteroids
 	this.DIM_X = [0, window.innerWidth];
 	this.DIM_Y = [0, window.innerHeight];
-	this.NUM_ASTEROIDS = 3;
+	this.NUM_ASTEROIDS = 5;
 	this.addAsteroids();
 }
 
 Game.prototype.addAsteroids = function() {
 	this.asteroids = [];
 	var asteroids = this.asteroids;
+  var game = this;
 	//put asteroids on canvas
 	for(var x=0; x<= this.NUM_ASTEROIDS; x++){
 		var asteroid = new Asteroids.Asteroid();
 		asteroid.pos = assignPosition();
 		asteroid.vel = [randomVel(), randomVel()];
+    asteroid.game = game;
 		asteroids.push(asteroid);
 	}
 }
@@ -41,26 +43,41 @@ Game.prototype.moveObjects = function() {
 	}
 }
 
-Game.prototype.wrap = function(ctx) {
+Game.prototype.wrap = function(object) {
   //ensure that asteroids don't leave screen
-  var astArray = this.asteroids;
-  console.log(this.asteroids);
   //if position[x] or position[y] is greater or less than screen bounds, send to opposite side of screen
-  for (var x in astArray) {
-    var xCoordinate = astArray[x].pos[0];
-    var yCoordinate = astArray[x].pos[1];
-    var radius = astArray[x].radius
-    if (xCoordinate - radius >= ctx.canvas.width){
-      astArray[x].pos[0] = 0 + astArray[x].vel[0];
+    var radius = object.radius
+    if (object.pos[0] - radius >= this.DIM_X[1]){
+      object.pos[0] = 0;
     }
-    if (xCoordinate + radius <= 0) {
-      astArray[x].pos[0]= ctx.canvas.width + astArray[x].vel[0];
+    if (object.pos[0] + radius <= 0) {
+      object.pos[0]= this.DIM_X[1];
     }
-    if (yCoordinate - radius >= ctx.canvas.height) {
-      astArray[x].pos[1] = 0 + astArray[x].vel[1];
+    if (object.pos[1] - radius >= this.DIM_Y[1]) {
+      object.pos[1] = 0;
     }
-    if (yCoordinate + radius <= 0) {
-      astArray[x].pos[1] = ctx.canvas.height + astArray[x].vel[1];
+    if (object.pos[1] + radius <= 0) {
+      object.pos[1] = this.DIM_Y[1];
+    }
+}
+
+Game.prototype.checkCollisions = function() {
+  for (var x=0;x<=(this.asteroids.length - 1);x++) {
+    for (var y=1;y<=(this.asteroids.length - 1);y++) {
+      if (x != y &&   this.asteroids[x].hasCollidedWith(this.asteroids[y])) {
+        console.log("boom!")
+        if (x > y) {
+          this.asteroids.splice(x, 1);
+          console.log(x);
+          console.log(y);
+          this.asteroids.splice(y, 1);
+        } else {
+          console.log(x);
+          console.log(y);
+          this.asteroids.splice(y, 1);
+          this.asteroids.splice(x, 1);
+        }
+      }
     }
   }
 }
