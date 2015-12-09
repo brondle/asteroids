@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+
+		<canvas id="primary" width="1000" height="500" style="border:1px solid black"></canvas>
+		<script src="movingObject.js"></script>
+		<script src="asteroid.js"></script>
+		<script src="game.js"></script>
+		<script src="gameView.js"></script>
+		<script src="jquery-1.11.3.min.js"></script>
+		<script>
+		window.onload = function() {
+			var game = new Asteroids.GameView();
+			game.start();
+		};
+		</script>
+	</body>
+</html>
