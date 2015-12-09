@@ -10,6 +10,7 @@ var Game = Asteroids.Game = function() {
 	this.DIM_Y = [0, window.innerHeight];
 	this.NUM_ASTEROIDS = 5;
 	this.addAsteroids();
+  this.ship = new Asteroids.Ship();
 }
 
 Game.prototype.addAsteroids = function() {
@@ -33,6 +34,12 @@ Game.prototype.draw = function(ctx) {
 	for (var x in this.asteroids) {
 		astArray[x].draw(ctx);
 	}
+  this.ship.draw(ctx);
+}
+
+Game.prototype.step = function () {
+  this.moveObjects();
+  this.checkCollisions();
 }
 
 Game.prototype.moveObjects = function() {
@@ -62,18 +69,16 @@ Game.prototype.wrap = function(object) {
 }
 
 Game.prototype.checkCollisions = function() {
+  //compare array to itself for collisions, ensuring that each asteroid is not compared to itself
   for (var x=0;x<=(this.asteroids.length - 1);x++) {
     for (var y=1;y<=(this.asteroids.length - 1);y++) {
       if (x != y &&   this.asteroids[x].hasCollidedWith(this.asteroids[y])) {
         console.log("boom!")
+        //delete collided asteroids, making sure that their index won't change
         if (x > y) {
           this.asteroids.splice(x, 1);
-          console.log(x);
-          console.log(y);
           this.asteroids.splice(y, 1);
         } else {
-          console.log(x);
-          console.log(y);
           this.asteroids.splice(y, 1);
           this.asteroids.splice(x, 1);
         }
