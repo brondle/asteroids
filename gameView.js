@@ -13,8 +13,11 @@
 	GameView.prototype.start = function() {
 		var game = this.game;
 		var ctx = this.ctx;
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
     //redraw canvas every 25 ms
 		setInterval(function() {
+      game.wrap(ctx);
 			game.draw(ctx);
 			game.moveObjects();
 		}, 25);
