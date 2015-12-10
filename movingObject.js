@@ -17,7 +17,6 @@
 		ctx.arc(this.pos[0], this.pos[1], this.radius, 0, Math.PI*2);
 		ctx.stroke();
 		ctx.closePath();
-		// console.log(this.pos);
 	}
 
 	movingObject.prototype.fly = function() {

@@ -40,7 +40,7 @@ Game.prototype.draw = function(ctx) {
 
 Game.prototype.step = function () {
   this.moveObjects();
-  this.checkCollisions();
+  // this.checkCollisions();
 }
 
 Game.prototype.moveObjects = function() {
@@ -54,18 +54,27 @@ Game.prototype.moveObjects = function() {
 Game.prototype.wrap = function(object) {
   //ensure that asteroids don't leave screen
   //if position[x] or position[y] is greater or less than screen bounds, send to opposite side of screen
+    var t;
     var radius = object.radius
     if (object.pos[0] - radius >= this.DIM_X[1]){
       object.pos[0] = 0;
+      t = true
     }
     if (object.pos[0] + radius <= 0) {
       object.pos[0]= this.DIM_X[1];
+      t = true
     }
     if (object.pos[1] - radius >= this.DIM_Y[1]) {
       object.pos[1] = 0;
+      t = true
     }
     if (object.pos[1] + radius <= 0) {
       object.pos[1] = this.DIM_Y[1];
+      t = true
+    }
+    if (object instanceof Asteroids.Missile && t === true) {
+      var index = this.asteroids.indexOf(object);
+      this.asteroids.splice(1, index);
     }
 }
 

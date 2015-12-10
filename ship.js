@@ -10,7 +10,7 @@
 	Ship.prototype = Object.create(Asteroids.movingObject.prototype, {
 		color: {value: "#00000"},
 		sides: {value: [ 25, 20]},
-		vel: {value: [0, 0], writable: true},
+		vel: {value: [0, 0]},
 		pos: {value: [500, 250]},
     angle: {value: 0, writable: true},
     radius: {value: 15} //obviously doesn't actually have one, but necessary for wrapping
@@ -21,6 +21,9 @@
 	Ship.prototype.draw = function(ctx) {
     var xCoord = this.pos[0];
     var yCoord = this.pos[1]-(this.sides[0]/2);
+    if (key.isPressed("space")) {
+      this.fire();
+    }
 		ctx.strokeStyle = this.color;
     //set ship as center of canvas for rotation
     ctx.translate (xCoord, yCoord);
@@ -69,13 +72,9 @@
   Ship.prototype.power = function() {
     if (key.isPressed("up")) {
       //calculate added velocity
-      if (this.direction === "down") {
         this.vel[0] += Math.sin(this.angle)/6;
         this.vel[1] -= Math.cos(this.angle)/6;
-      } else {
-        this.vel[0] += Math.sin(this.angle)/6;
-        this.vel[1] -= Math.cos(this.angle)/6;
-      }
+
     }
 
     if (key.isPressed("down")) {
@@ -97,5 +96,15 @@
         this.vel[x] = -5;
       }
     }
+  }
+
+  Ship.prototype.fire = function() {
+    var missile = new Asteroids.Missile(this.game, [0, 0], [0, 0]);
+    missile.pos[0] += this.pos[0];
+    missile.pos[1] += this.pos[1];
+    missile.vel[0] += (Math.sin(this.angle)*3);
+    missile.vel[1] -= (Math.cos(this.angle)*3);
+
+    this.game.asteroids.push(missile);
   }
 })();
