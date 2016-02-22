@@ -21,9 +21,8 @@
 	Ship.prototype.draw = function(ctx) {
     var xCoord = this.pos[0];
     var yCoord = this.pos[1]-(this.sides[0]/2);
-    if (key.isPressed("space")) {
-      this.fire();
-    }
+    var ship = this;
+    ship.fire();
 		ctx.strokeStyle = this.color;
     //set ship as center of canvas for rotation
     ctx.translate (xCoord, yCoord);
@@ -45,7 +44,7 @@
 
 
 	Ship.prototype.rotate = function() {
-    var degrees = this.angle / RADS
+    var degrees = this.angle / RADS;
 		if(key.isPressed("left")) {
       //rotate left
       this.angle -= .1;
@@ -78,13 +77,9 @@
     }
 
     if (key.isPressed("down")) {
-      if (this.direction === "down") {
         this.vel[0] -= Math.sin(this.angle)/12;
         this.vel[1] += Math.cos(this.angle)/12;
-      } else {
-        this.vel[0] -= Math.sin(this.angle)/12;
-        this.vel[1] += Math.cos(this.angle)/12;
-      }
+
     }
 
     //set speed limits
@@ -99,12 +94,36 @@
   }
 
   Ship.prototype.fire = function() {
-    var missile = new Asteroids.Missile(this.game, [0, 0], [0, 0]);
-    missile.pos[0] += this.pos[0];
-    missile.pos[1] += this.pos[1];
-    missile.vel[0] += (Math.sin(this.angle)*3);
-    missile.vel[1] -= (Math.cos(this.angle)*3);
+    var ship = this;
+     if (key.isPressed("space") && this.game.counter % 2 === 0) {
+      var missile = new Asteroids.Missile(ship.game, [0, 0], [0, 0]);
+      var degrees = ship.angle / RADS;
+      // console.log(ship.angle);
+      var sin = Math.sin(ship.angle);
+      var cos = Math.cos(ship.angle);
+      var tan = Math.tan(ship.angle);
+      console.log(sin + ", " + cos);
+      var shipX = ship.pos[0];
+      var shipY = ship.pos[1];
+      if (degrees > 0 && degrees <= 90) {
+        missile.pos[0] += shipX + (35*sin);
+        missile.pos[1] += (shipY - (50*cos + 12*sin));
+      } else if (degrees > 90 && degrees <= 180) {
+        missile.pos[0] += shipX + (30*sin);
+        missile.pos[1] += shipY - (25*cos + 12*sin);
+      } else if (degrees > 180 && degrees <= 270) {
+        missile.pos[0] += shipX + (30*sin);
+        missile.pos[1] += shipY - (25*cos - 12*sin);
+      } else {
+        missile.pos[0] += shipX + (35*sin);
+        missile.pos[1] += shipY - (50*cos - 12*sin);
+        // console.log(missile.pos[0]  + ", " + missile.pos[1]);
 
-    this.game.asteroids.push(missile);
+      }
+      missile.vel[0] += (sin*3);
+      missile.vel[1] -= (cos*3);
+
+      ship.game.missiles.push(missile);
+    }
   }
 })();

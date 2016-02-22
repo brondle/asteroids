@@ -12,6 +12,8 @@ var Game = Asteroids.Game = function() {
 	this.addAsteroids();
   this.ship = new Asteroids.Ship();
   this.ship.game = this;
+  this.counter = 0;
+  this.missiles = [];
 }
 
 Game.prototype.addAsteroids = function() {
@@ -35,12 +37,15 @@ Game.prototype.draw = function(ctx) {
 	for (var x in this.asteroids) {
 		astArray[x].draw(ctx);
 	}
+  for (var x in this.missiles) {
+    this.missiles[x].draw(ctx);
+  }
   this.ship.draw(ctx);
 }
 
 Game.prototype.step = function () {
   this.moveObjects();
-  // this.checkCollisions();
+  this.checkCollisions();
 }
 
 Game.prototype.moveObjects = function() {
@@ -49,6 +54,9 @@ Game.prototype.moveObjects = function() {
 	for (var x in astArray) {
 			astArray[x].fly();
 	}
+  for (var x in this.missiles) {
+    this.missiles[x].fly();
+  }
 }
 
 Game.prototype.wrap = function(object) {
@@ -73,16 +81,16 @@ Game.prototype.wrap = function(object) {
       t = true
     }
     if (object instanceof Asteroids.Missile && t === true) {
-      var index = this.asteroids.indexOf(object);
-      this.asteroids.splice(1, index);
+      var index = this.missiles.indexOf(object);
+      this.missiles.splice(index, 1);
     }
 }
 
 Game.prototype.checkCollisions = function() {
   //compare array to itself for collisions, ensuring that each asteroid is not compared to itself
-  for (var x=0;x<=(this.asteroids.length - 1);x++) {
-    for (var y=1;y<=(this.asteroids.length - 1);y++) {
-      if (x != y &&   this.asteroids[x].hasCollidedWith(this.asteroids[y])) {
+  for (var x=0;x<(this.asteroids.length);x++) {
+    for (var y=1;y<(this.asteroids.length);y++) {
+      if (x != y && this.asteroids[x].hasCollidedWith(this.asteroids[y])) {
         console.log("boom!")
         //delete collided asteroids, making sure that their index won't change
         if (x > y) {
