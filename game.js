@@ -7,13 +7,16 @@
 var Game = Asteroids.Game = function() {
 	// create game, set "constants" for dimensions and number of asteroids
 	this.DIM_X = [0, window.innerWidth];
-	this.DIM_Y = [0, window.innerHeight];
-	this.NUM_ASTEROIDS = 5;
-	this.addAsteroids();
+	this.DIM_Y = [0, window.innerHeight]
   this.ship = new Asteroids.Ship();
   this.ship.game = this;
-  this.counter = 0;
+	this.NUM_ASTEROIDS = 5;
+	this.addAsteroids();
+  this.hasFired = false;
+  this.isPaused = false;
+  this.beatLevel = false;
   this.missiles = [];
+  this.level = 0;
 }
 
 Game.prototype.addAsteroids = function() {
@@ -23,7 +26,8 @@ Game.prototype.addAsteroids = function() {
 	//put asteroids on canvas
 	for(var x=0; x<= this.NUM_ASTEROIDS; x++){
 		var asteroid = new Asteroids.Asteroid();
-		asteroid.pos = assignPosition();
+		asteroid.pos = assignPosition(game);
+    asteroid.radius *= Math.random() + .35;
 		asteroid.vel = [randomVel(), randomVel()];
     asteroid.game = game;
 		asteroids.push(asteroid);
@@ -32,15 +36,25 @@ Game.prototype.addAsteroids = function() {
 
 Game.prototype.draw = function(ctx) {
 	//clear canvas, then re-draw
-	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	var astArray = this.asteroids
-	for (var x in this.asteroids) {
-		astArray[x].draw(ctx);
-	}
-  for (var x in this.missiles) {
-    this.missiles[x].draw(ctx);
-  }
-  this.ship.draw(ctx);
+  if (this.asteroids.length === 0) {
+    this.beatLevel = true;
+    this.isPaused = true;
+    this.ship.recenter();
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    this.NUM_ASTEROIDS += this.NUM_ASTEROIDS;
+    this.addAsteroids();
+    this.level++;
+  } else {
+  	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  	var astArray = this.asteroids
+  	for (var x in this.asteroids) {
+  		astArray[x].draw(ctx);
+  	}
+    for (var x in this.missiles) {
+      this.missiles[x].draw(ctx);
+    }
+    this.ship.draw(ctx);
+    }
 }
 
 Game.prototype.step = function () {
@@ -93,7 +107,24 @@ Game.prototype.checkCollisions = function() {
       if (x != y && this.asteroids[x].hasCollidedWith(this.asteroids[y])) {
         console.log("boom!")
         //delete collided asteroids, making sure that their index won't change
-        if (x > y) {
+        if (this.asteroids[x].radius > 35 && this.asteroids[y].radius > 35) {
+          this.asteroids[x].radius *= .5;
+          this.asteroids[x].vel[0] *= -1;
+          this.asteroids[x].vel[1] *= -1;
+          this.asteroids[y].radius *= .5;
+          this.asteroids[y].vel[0] *= -1;
+          this.asteroids[y].vel[1] *= -1;
+        } else if (this.asteroids[x].radius > 35 && this.asteroids[y].radius <= 35) {
+          this.asteroids[x].radius *= .5;
+          this.asteroids[x].vel[0] *= -1;
+          this.asteroids[x].vel[1] *= -1;
+          this.asteroids.splice(y, 1);
+        } else if ( this.asteroids[y].radius > 35 && this.asteroids[x].radius <= 35) {
+          this.asteroids[y].radius *= .5;
+          this.asteroids[y].vel[0] *= -1;
+          this.asteroids[y].vel[1] *= -1;
+          this.asteroids.splice(x, 1);
+        } else if (x > y) {
           this.asteroids.splice(x, 1);
           this.asteroids.splice(y, 1);
         } else {
@@ -102,16 +133,27 @@ Game.prototype.checkCollisions = function() {
         }
       }
     }
+    for (var z=0;z<(this.missiles.length); z++) {
+      if (this.asteroids[x].hasCollidedWith(this.missiles[z])) {
+        this.asteroids.splice(x, 1);
+        this.missiles.splice(z, 1);
+      }
+    }
   }
 }
 
-function assignPosition(){
+function assignPosition(game){
 	//generate random position for asteroids
 	var xPos = (Math.round(Math.random()*window.innerWidth));
 	//eventually adapt to screen size
 	var yPos = (Math.round(Math.random()*window.innerHeight));
+  if ((xPos < game.ship.pos[0] + 100 && xPos > game.ship.pos[0] - 100) && (yPos < game.ship.pos[1] + 100 && yPos > game.ship.pos[1] - 100)) {
+    xPos += 200;
+    yPos += 200;
+  }
 	return [xPos, yPos]
 }
+
 
 
 function randomVel() {

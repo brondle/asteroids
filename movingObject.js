@@ -21,7 +21,7 @@
 
 	movingObject.prototype.fly = function() {
 		//increment position by velocity
-    this.game.wrap(this);
+    	this.game.wrap(this);
 		this.pos[0] += this.vel[0];
 		this.pos[1] += this.vel[1];
 	}

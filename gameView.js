@@ -17,12 +17,33 @@
 	    ctx.canvas.height = window.innerHeight;
 	    //redraw canvas every 25 ms
 		setInterval(function() {
-	      	game.step();
-			game.draw(ctx);
+			checkPause(game);
+			if (!game.isPaused) {
+		      	game.step();
+				game.draw(ctx);
+			} else {
+    			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    			if (!game.beatLevel) {
+    			ctx.fillText("PAUSED", ctx.canvas.width/2, ctx.canvas.height/2);
+    			} else {
+    			ctx.fillText("You beat this level! Welcome to level " + game.level, ctx.canvas.width/2 - 30, ctx.canvas.height/2);
+
+    			}
+			}
 		}, 25);
 		setInterval(function() {
-	      game.counter++;
-	    }, 25);
+	      game.hasFired = false;
+	    }, 300);
+	}
+	function checkPause(game) {
+	  if (key.isPressed("p")) {
+	    if(game.isPaused === false) {
+	      game.isPaused = true;
+	    } else {
+	    	game.beatLevel = false
+	    	game.isPaused = false;
+	    }
+	  }
 	}
 
 })();

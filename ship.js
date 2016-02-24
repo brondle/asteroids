@@ -18,10 +18,31 @@
 
 	Ship.prototype.constructor = Ship;
 
+  Ship.prototype.recenter = function() {
+    this.pos[0] = 500;
+    this.pos[1] = 250;
+  }
+
 	Ship.prototype.draw = function(ctx) {
     var xCoord = this.pos[0];
     var yCoord = this.pos[1]-(this.sides[0]/2);
     var ship = this;
+    if (ship.vel[0] > 0 && ship.vel[1] > 0) {
+    ship.vel[0] -= .01;
+    ship.vel[1] -= .01;
+  } else if (ship.vel[0] > 0 && ship.vel[1] < 0) {
+    ship.vel[0] -= .01;
+    ship.vel[1] += .01;
+  } else if (ship.vel[0] < 0 && ship.vel[1] > 0) {
+    ship.vel[0] += .01;
+    ship.vel[1] -= .01;
+  } else if (ship.vel[0] < 0 && ship.vel[1] < 0) {
+    ship.vel[0] += .01;
+    ship.vel[1] += .01;
+  } else {
+    ship.vel[0] = 0;
+    ship.vel[1] = 0;
+  }
     ship.fire();
 		ctx.strokeStyle = this.color;
     //set ship as center of canvas for rotation
@@ -95,7 +116,7 @@
 
   Ship.prototype.fire = function() {
     var ship = this;
-     if (key.isPressed("space") && this.game.counter % 2 === 0) {
+     if (key.isPressed("space") && this.game.hasFired === false) {
       var missile = new Asteroids.Missile(ship.game, [0, 0], [0, 0]);
       var degrees = ship.angle / RADS;
       // console.log(ship.angle);
@@ -120,10 +141,11 @@
         // console.log(missile.pos[0]  + ", " + missile.pos[1]);
 
       }
-      missile.vel[0] += (sin*3);
-      missile.vel[1] -= (cos*3);
+      missile.vel[0] += (sin*20);
+      missile.vel[1] -= (cos*20);
 
       ship.game.missiles.push(missile);
+      ship.game.hasFired = true;
     }
   }
 })();
