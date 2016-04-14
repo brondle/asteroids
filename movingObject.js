@@ -12,11 +12,35 @@
 
 	movingObject.prototype.draw = function(ctx) {
 		//set canvas attributes and draw
-		ctx.beginPath();
-		ctx.strokeStyle = this.color;
-		ctx.arc(this.pos[0], this.pos[1], this.radius, 0, Math.PI*2);
-		ctx.stroke();
-		ctx.closePath();
+		var object = this;
+		var imgObj = new Image();
+		imgObj.onload = function(){
+					// console.log("foo");
+		if (object.img) {
+			// console.log(object.img);
+			ctx.beginPath();
+			ctx.strokeStyle = object.color;
+			var radius = object.radius;
+			ctx.arc(object.pos[0], object.pos[1], radius, 0, Math.PI*2);
+			ctx.stroke();
+			ctx.closePath();
+			ctx.clip();
+			// ctx.drawImage(object.img,object.pos[0] - radius, object.pos[1] - radius, radius * 2, radius * 2);
+			// ctx.restore();
+		} else {
+			// console.log("foo");
+			ctx.beginPath();
+			ctx.strokeStyle = object.color;
+			ctx.arc(object.pos[0], object.pos[1], object.radius, 0, Math.PI*2);
+			ctx.stroke();
+			ctx.closePath();
+		}
+	}
+	// if (object.img) {
+	//  imgObj.src = object.img.src;
+	// }
+
+
 	}
 
 	movingObject.prototype.fly = function() {

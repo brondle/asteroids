@@ -1,0 +1,28 @@
+function myFunc(args){
+	var sum = 0
+	for (var i=0; i < arguments.length; i++) {
+		for (var x=i+1; x < arguments.length; x++) {
+			sum += ((arguments[i] - arguments[x])*(arguments[i] - arguments[x]));
+		}
+	}
+	return sum;
+}
+
+function parseString(string) {
+//Wasn't sure if you wanted to include spaces among repeated characters, so I left them in,
+// but if that's not the case I'd just throw in an '&& charArray[x] != " "' in the if statement.
+	var charArray = string.split("");
+	var outputHash = {};
+		for (var i=0; i < charArray.length; i++) {
+			var counter = 1;
+			for (var x=i+1; x < charArray.length; x++) {
+				if (charArray[x] === charArray[i] && outputHash[charArray[x]] === undefined) {
+					counter++;
+				}
+			}
+			if (counter >= 2) {
+				outputHash[charArray[i]] = counter;
+			}
+		}
+	return outputHash;
+}

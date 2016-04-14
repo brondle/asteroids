@@ -7,39 +7,49 @@
 	var GameView = Asteroids.GameView = function() {
     //create game, locate canvas
 		this.game = new Asteroids.Game();
+		this.game.gameView = this;
 		this.ctx = document.getElementById("primary").getContext("2d");
 	}
 
 	GameView.prototype.start = function() {
 		var game = this.game;
 		var ctx = this.ctx;
-	    ctx.canvas.width = window.innerWidth;
-	    ctx.canvas.height = window.innerHeight;
+	    ctx.canvas.width = window.innerWidth - 100;
+	    ctx.canvas.height = window.innerHeight - 100;
 	    //redraw canvas every 25 ms
 		setInterval(function() {
-			checkPause(game);
 			if (!game.isPaused) {
 		      	game.step();
 				game.draw(ctx);
 			} else {
     			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    			if (!game.beatLevel) {
-    			ctx.fillText("PAUSED", ctx.canvas.width/2, ctx.canvas.height/2);
+    			if (game.justDied === true) {
+    			 ctx.fillText("You died! Press P to continue", ctx.canvas.width/2, ctx.canvas.height/2);
+    			} else if (!game.beatLevel) {
+    			ctx.fillText("PAUSED, press P to START", ctx.canvas.width/2, ctx.canvas.height/2);
     			} else {
-    			ctx.fillText("You beat this level! Welcome to level " + game.level, ctx.canvas.width/2 - 30, ctx.canvas.height/2);
-
+    			ctx.fillText("You beat this level! Welcome to level " + game.level + ". Press P to Start.", ctx.canvas.width/2 - 30, ctx.canvas.height/2);
     			}
 			}
 		}, 25);
+		setInterval(function() {
+			checkPause(game);
+		}, 50);
 		setInterval(function() {
 	      game.hasFired = false;
 	    }, 300);
 	}
 	function checkPause(game) {
+		var ctx = game.gameView.ctx;
 	  if (key.isPressed("p")) {
 	    if(game.isPaused === false) {
 	      game.isPaused = true;
 	    } else {
+	    	if (game.justDied === true) {
+	    		game.justDied = false;
+	    		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	    		game.addAsteroids();
+	    	}
 	    	game.beatLevel = false
 	    	game.isPaused = false;
 	    }

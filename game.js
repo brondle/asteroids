@@ -17,6 +17,8 @@ var Game = Asteroids.Game = function() {
   this.beatLevel = false;
   this.missiles = [];
   this.level = 0;
+  this.lives = 4;
+  this.justDied = false;
 }
 
 Game.prototype.addAsteroids = function() {
@@ -46,6 +48,9 @@ Game.prototype.draw = function(ctx) {
     this.level++;
   } else {
   	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // var background = new Image();
+    // background.src = "img/blackhole.jpg";
+    // ctx.drawImage(background, 0, 0);
   	var astArray = this.asteroids
   	for (var x in this.asteroids) {
   		astArray[x].draw(ctx);
@@ -55,6 +60,8 @@ Game.prototype.draw = function(ctx) {
     }
     this.ship.draw(ctx);
     }
+  ctx.fillText("Level " + this.level, 15, 15);
+
 }
 
 Game.prototype.step = function () {
@@ -131,6 +138,12 @@ Game.prototype.checkCollisions = function() {
           this.asteroids.splice(y, 1);
           this.asteroids.splice(x, 1);
         }
+      }
+      if (this.asteroids[x].hasCollidedWith(this.ship)) {
+        console.log("dead!")
+        this.lives--;
+        this.justDied = true;
+        this.isPaused = true;
       }
     }
     for (var z=0;z<(this.missiles.length); z++) {
