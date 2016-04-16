@@ -8,7 +8,7 @@
 	var Ship = Asteroids.Ship = function(){}
 
 	Ship.prototype = Object.create(Asteroids.movingObject.prototype, {
-		color: {value: "#00000"},
+		color: {value: "#FF000"},
 		sides: {value: [ 25, 20]},
 		vel: {value: [0, 0]},
 		pos: {value: [500, 250]},

@@ -12,7 +12,7 @@ var Missile = Asteroids.Missile = function(game, pos, vel){
 }
 
 Missile.prototype = Object.create(Asteroids.movingObject.prototype, {
-	color: {value : "#FF000"},
+	color: {value : "#FF0000"},
 	radius: {value: 5}
 });
 

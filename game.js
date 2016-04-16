@@ -171,7 +171,7 @@ function assignPosition(game){
 
 function randomVel() {
 	//generate random velocity between 0.5 and 2.5, randomly assign positive or negative values
- var vel = Math.random() * 2 + 0.5;
+ var vel = Math.random();
  vel *= Math.floor(Math.random()*2) == 1 ? 1: -1;
  return vel
 }

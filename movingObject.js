@@ -13,32 +13,25 @@
 	movingObject.prototype.draw = function(ctx) {
 		//set canvas attributes and draw
 		var object = this;
-		var imgObj = new Image();
-		imgObj.onload = function(){
-					// console.log("foo");
+
 		if (object.img) {
-			// console.log(object.img);
+			ctx.save();
 			ctx.beginPath();
-			ctx.strokeStyle = object.color;
+			ctx.strokeStyle = "rgba(0, 0, 0, 0)";
 			var radius = object.radius;
 			ctx.arc(object.pos[0], object.pos[1], radius, 0, Math.PI*2);
 			ctx.stroke();
 			ctx.closePath();
 			ctx.clip();
-			// ctx.drawImage(object.img,object.pos[0] - radius, object.pos[1] - radius, radius * 2, radius * 2);
-			// ctx.restore();
+			ctx.drawImage(object.img, object.pos[0]-radius*1.5, object.pos[1]-radius*1.5, radius*3, radius*3);
+			ctx.restore();
 		} else {
-			// console.log("foo");
 			ctx.beginPath();
 			ctx.strokeStyle = object.color;
 			ctx.arc(object.pos[0], object.pos[1], object.radius, 0, Math.PI*2);
 			ctx.stroke();
 			ctx.closePath();
 		}
-	}
-	// if (object.img) {
-	//  imgObj.src = object.img.src;
-	// }
 
 
 	}

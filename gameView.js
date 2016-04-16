@@ -9,11 +9,14 @@
 		this.game = new Asteroids.Game();
 		this.game.gameView = this;
 		this.ctx = document.getElementById("primary").getContext("2d");
+
 	}
 
 	GameView.prototype.start = function() {
 		var game = this.game;
 		var ctx = this.ctx;
+		var lives = document.getElementById("lives");
+		var level = document.getElementById("level");
 	    ctx.canvas.width = window.innerWidth - 100;
 	    ctx.canvas.height = window.innerHeight - 100;
 	    //redraw canvas every 25 ms
@@ -25,10 +28,13 @@
     			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     			if (game.justDied === true) {
     			 ctx.fillText("You died! Press P to continue", ctx.canvas.width/2, ctx.canvas.height/2);
+    			 lives.innerHTML = this.game.lives;
     			} else if (!game.beatLevel) {
     			ctx.fillText("PAUSED, press P to START", ctx.canvas.width/2, ctx.canvas.height/2);
     			} else {
     			ctx.fillText("You beat this level! Welcome to level " + game.level + ". Press P to Start.", ctx.canvas.width/2 - 30, ctx.canvas.height/2);
+    			level.innerHTML = this.game.level;
+
     			}
 			}
 		}, 25);
