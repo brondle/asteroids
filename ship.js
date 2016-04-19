@@ -6,12 +6,13 @@
 
   var RADS = Math.PI/180;
 	var Ship = Asteroids.Ship = function(){}
+  var flameCounter = 0;
 
 	Ship.prototype = Object.create(Asteroids.movingObject.prototype, {
 		color: {value: "#FF000"},
 		sides: {value: [ 25, 20]},
-		vel: {value: [0, 0]},
-		pos: {value: [500, 250]},
+		vel: {value: [0, 0], writable: true},
+		pos: {value: [500, 250], writable: true},
     angle: {value: 0, writable: true},
     radius: {value: 15} //obviously doesn't actually have one, but necessary for wrapping
 	});
@@ -27,6 +28,11 @@
     var xCoord = this.pos[0];
     var yCoord = this.pos[1]-(this.sides[0]/2);
     var ship = this;
+    var radius = this.radius;
+    this.img = new Image();
+    this.img.src = "./img/ship.png";
+    this.img.onload = function() {
+    }
     if (ship.vel[0] > 0 && ship.vel[1] > 0) {
     ship.vel[0] -= .01;
     ship.vel[1] -= .01;
@@ -57,10 +63,14 @@
 		ctx.moveTo(-10, 0);
 		ctx.lineTo(0, 0 - this.sides[0]);
 		ctx.lineTo(10, 0);
+    ctx.drawImage(this.img, -15, -25, radius*2, radius*2);
 		ctx.closePath();
-		ctx.stroke();
+    if (flameCounter % 4 === 0 && (key.isPressed("up") || key.isPressed("down"))) {
+        this.drawFlame(ctx);
+    }
     ctx.rotate(this.angle*(-1));
     ctx.translate(xCoord*(-1), yCoord*(-1));
+    flameCounter ++;
 	}
 
 
@@ -147,5 +157,17 @@
       ship.game.missiles.push(missile);
       ship.game.hasFired = true;
     }
+  }
+
+  Ship.prototype.drawFlame = function(ctx) {
+    ctx.fillStyle = "#990000";
+    ctx.beginPath();
+    ctx.beginPath();
+    ctx.moveTo(-6, 0);
+    ctx.lineTo(0, 0 + this.sides[0]);
+    ctx.lineTo(6, 0);
+    ctx.fill();
+    ctx.closePath();
+
   }
 })();

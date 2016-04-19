@@ -4,9 +4,19 @@
 		<meta charset="utf-8">
 		<title></title>
 		<link rel="stylesheet" href="styles.css" media="screen" charset="utf-8">
+		<link href='https://fonts.googleapis.com/css?family=Play:400,700' rel='stylesheet' type='text/css'>
 	</head>
 	<body>
-		<div id="info"> Level: <span id="level"></span>Lives: <span id="lives"></span> </div>
+		<div id="info"> Level: <span id="level"></span>  Lives: <span id="lives"></span> </div>
+		<div id="menu" class="hidden">
+			<ul class="menu">
+				<li>Press P to play/pause</li>
+				<li>Use arrow keys to move</li>
+				<li>Press space bar to shoot</li>
+			</ul>
+		</div>
+
+		<div id="score"> Score: <span id="gamescore"></span> High Score: <span id="highscore"></span></div>
 		<canvas id="primary" style="border:1px solid black"></canvas>
 		<script src="movingObject.js"></script>
 		<script src="asteroid.js"></script>
@@ -16,8 +26,16 @@
 		<script src="gameView.js"></script>
 		<script src="keymaster.js">	</script>
 		<script src="jquery-1.11.3.min.js"></script>
+		<div id="player">
+		<audio id= "audio" controls autoplay>
+  		<source src="Marriage.mp3" type="audio/mpeg">
+		Your browser does not support the audio element.
+		</audio>
+		</div>
 		<script>
 		window.onload = function() {
+			var audio = document.getElementById("audio");
+			audio.volume = 0.5;
 			var game = new Asteroids.GameView();
 			game.start();
 		};
